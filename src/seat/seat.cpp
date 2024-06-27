@@ -1,5 +1,6 @@
 #include "seat.h"
 
+#include "reservation/reservation.h"
 #include "test.h"
 
 namespace {
@@ -7,14 +8,20 @@ namespace {
 /// Liefert die Position einer Station in einer Route.
 size_t station_pos(std::vector<std::string> const& route,
                    std::string const& station) {
-  // TODO
-  return 0;
+  for(int i = 0; i < std::size(route); i++){
+    if(station == route[i]){
+      return i;
+      }
+  }
+  return route.size();
 }
 
 /// Prüft, ob eine Station in einer Route gültig ist.
 bool station_valid_for_route(std::vector<std::string> const& route,
                              std::string const& station) {
-  // TODO
+  if(station_pos(route, station) != route.size()){
+    return true;
+    }
   return false;
 }
 
@@ -24,18 +31,33 @@ namespace resy {
 
 bool Seat::reservations_valid_for_route(
     std::vector<std::string> const& route) const {
-  // TODO
-  return false;
+  for(int i = 0; i < reservations.size(); i++){
+    if(!reservations[i].is_valid_for_route(route)){
+      return false;
+    }
+  }
+  return true;
 }
 
 bool Seat::reservations_overlap_for_route(
     std::vector<std::string> const& route) const {
-  // TODO
-  return false;
+  for(int i = 0; i < reservations.size(); i++){
+    for(int n = 1; n < reservations.size(); n++){
+      if(reservations_valid_for_route(route) && reservations[i].destination_pos(route) <= reservations[n].origin_pos(route)){
+        return false;
+      }
+      if(reservations_valid_for_route(route) && reservations[n].destination_pos(route) <= reservations[i].origin_pos(route)){
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 bool Seat::seat_valid(std::vector<std::string> const& route) const {
-  // TODO
+  if(reservations_valid_for_route(route) && !reservations_overlap_for_route(route)){
+        return true;
+      }
   return false;
 }
 

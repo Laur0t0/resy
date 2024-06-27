@@ -1,24 +1,36 @@
 #include "reservation.h"
 
+#include "factories/factories.h"
 #include "test.h"
+#include <iterator>
 
 namespace resy {
 
 size_t Reservation::origin_pos(std::vector<std::string> const& route) const {
-  // TODO
-  return 0;
+  for(int i = 0; i < route.size(); i++){
+    if(origin == route[i]){
+      return i;
+    }
+  }
+  return route.size();
 }
 
 size_t Reservation::destination_pos(
     std::vector<std::string> const& route) const {
-  // TODO
-  return 0;
+      for(int i = 0; i < std::size(route); i++){
+        if(destination == route[i]){
+          return i;
+        }
+      }
+      return route.size();
 }
 
 bool Reservation::is_valid_for_route(
     std::vector<std::string> const& route) const {
-  // TODO
-  return false;
+        if(destination_pos(route) != route.size() && origin_pos(route) < destination_pos(route)){
+          return true;
+        }
+      return false;
 }
 
 TEST_CASE("origin_pos") {
