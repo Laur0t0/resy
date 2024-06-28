@@ -1,7 +1,9 @@
 #include "seat.h"
-
 #include "reservation/reservation.h"
 #include "test.h"
+#include <algorithm>
+#include <cstddef>
+#include <functional>
 
 namespace {
 
@@ -64,13 +66,25 @@ bool Seat::seat_valid(std::vector<std::string> const& route) const {
 std::vector<Reservation> Seat::reservations_sorted(
     std::vector<std::string> const& route) const {
   std::vector<Reservation> result = reservations;
-  // TODO
+  if (!seat_valid(route)){return {};}
+  std::sort(result.begin(), result.end(),
+            [&route](Reservation const& a, Reservation const& b){
+            return a.destination_pos(route) < b.destination_pos(route);
+            }
+  );
   return result;
 }
 
 std::string Seat::display_for_station(std::vector<std::string> const& route,
                                       std::string const& station) const {
-  // TODO
+  if (!seat_valid(route)) {return "ggf. freigeben";}
+  if (!station_valid_for_route(route, station)) {return "ggf. freigeben";}
+  size_t current_pos = station_pos(route, station);
+  for (auto r : reservations_sorted(route)) {
+    if (current_pos < r.destination_pos(route)) {
+      return r.origin + " -> " + r.destination;
+    }
+  }
   return "frei";
 }
 
