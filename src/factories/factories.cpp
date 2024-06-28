@@ -7,14 +7,20 @@
 namespace resy {
 
 Reservation reservation_from_string(std::string const& str) {
-  // TODO
-  return {};
+  std::string origin;
+  std::string destination; 
+  origin = str[0];
+  destination = str[str.size()-1];
+  return {origin, destination};
 }
 
 std::vector<Reservation> reservations_from_strings(
     std::vector<std::string> const& strings) {
   std::vector<Reservation> reservations;
-  // TODO
+  for (int i = 0; i < strings.size(); i++) {
+    std::string str = strings[i];
+    reservations.push_back(reservation_from_string(str));
+  }
   return reservations;
 }
 
